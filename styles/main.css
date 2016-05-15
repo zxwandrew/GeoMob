@@ -14,10 +14,10 @@
         bottom: 0;
         position: absolute;
         z-index: 300;
-        width: 80%;
+        width: 50%;
         height: 30%;
-        left: 10%;
-        right: 10%;
+        left: 25%;
+        right: 25%;
       }
       .navbar{
         border-radius:0px;
