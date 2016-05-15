@@ -9,7 +9,16 @@
         overflow: hidden;
         font-family: "Trebuchet MS";
       }
-
+      #histogrampanel{
+        display:none;
+        bottom: 0;
+        position: absolute;
+        z-index: 300;
+        width: 50%;
+        height: 30%;
+        left: 25%;
+        right: 25%;
+      }
       .navbar{
         border-radius:0px;
       }
