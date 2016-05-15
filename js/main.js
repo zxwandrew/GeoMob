@@ -108,6 +108,6 @@
      }
 
      function initHistogram(){
-
+        $("#histogrampanel").css("display","block");
      }
    });
