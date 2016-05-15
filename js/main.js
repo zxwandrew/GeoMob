@@ -5,6 +5,7 @@
  var baseHeatUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0";
  var routesFeatureUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/1";
  var allTimes = [];
+ var allDeviceIDs = [];
  var dailyAverage = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
  var dailyAverageComputed = false;
 
@@ -30,7 +31,7 @@
      "dojo/dom-class",
      "dojo/on",
      "dijit/form/DateTextBox",
-     "dijit/layout/BorderContainer", 
+     "dijit/layout/BorderContainer",
      "dijit/layout/ContentPane",
      "dojo/domReady!"
    ],
@@ -90,29 +91,29 @@
 
      routeLayer.setRenderer(new SimpleRenderer(lineSymb));
      map.addLayer(routeLayer);
-     
-     var llWidget = new LayerList({  
-        map: map,  
-        showLegend: true,   
-        layers: [{  
+
+     var llWidget = new LayerList({
+        map: map,
+        showLegend: true,
+        layers: [{
             layer: heatmapFeatureLayer,
             showLegend: true,
             id: "HeatMap Layer"
-          },{  
-            layer: routeLayer,  
+          },{
+            layer: routeLayer,
               showLegend: true,
               id: "RoutePath Layer"
-          }]  
-        },"layerList");  
-    
-        llWidget.startup();  
-     
+          }]
+        },"layerList");
+
+        llWidget.startup();
+
     llWidget.on("load", function() {
          document.getElementsByClassName("esriLabel")[1].innerHTML = "HeatMap Layer"
          document.getElementsByClassName("esriLabel")[0].innerHTML = "RoutePath Layer"
      });
-     
-     
+
+
      map.on("click", clickHandler);
 
      function clickHandler(evt) {
@@ -142,10 +143,14 @@
          var allFeats = featureset.features;
 
          allTimes = [];
+         allDeviceIDs = [];
 
          for (var i = 0; i < allFeats.length; i++) {
            var nowDate = new Date(allFeats[i].attributes.END_TIME*1000);
            allTimes.push(nowDate);
+           if(allDeviceIDs.indexOf(allFeats[i].attributes.DeviceID)== -1){
+             allDeviceIDs.push(allFeats[i].attributes.DeviceID);
+           }
          }
          initHistograms();
        });
@@ -154,6 +159,7 @@
 
      function initHistograms(){
        calcDailyAverage();
+       calcPopApp();
        showChart();
      }
      function showChart(){
@@ -233,4 +239,17 @@
       //  }//finished computing daily average for all days at hourly interval
      }
 
+     function calcPopApp(){
+       var appDivision = [];
+       for(var i=0; i<allDeviceIDs.length; i++){
+         var qtask = new QueryTask("http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/2");
+         var q = new Query();
+         q.outFields = ["deviceID", "app"];
+         q.where = "deviceID = "+allDeviceIDs[i];
+         qtask.execute(q, function(res){
+           console.log(res);
+           appDivision.push(res.features[0].attributes.app);
+         })
+       }
+     }
    });
