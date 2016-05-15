@@ -2,13 +2,14 @@
    $('.dropdown-toggle').dropdown()
  });
  var map;
- var baseHeatUrl = "http://kurama:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0";
- var routesFeatureUrl = "http://kurama:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/1";
+ var baseHeatUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0";
+ var routesFeatureUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/1";
  var allTimes = [];
  var dailyAverage = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
  var dailyAverageComputed = false;
 
  require(["esri/map",
+     "esri/dijit/LayerList",
      "esri/layers/FeatureLayer",
      "esri/tasks/QueryTask",
      "esri/tasks/query",
@@ -29,10 +30,12 @@
      "dojo/dom-class",
      "dojo/on",
      "dijit/form/DateTextBox",
+     "dijit/layout/BorderContainer", 
+     "dijit/layout/ContentPane",
      "dojo/domReady!"
    ],
 
-   function(Map, FeatureLayer, QueryTask, Query, InfoTemplate,
+   function(Map, LayerList, FeatureLayer, QueryTask, Query, InfoTemplate,
      SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, HeatmapRenderer, SimpleRenderer,
      Circle, Graphic,
      Search, Chart2D, dojoxTheme, Highlight, MoveSlice, Tooltip, Color, dom, domClass, on, DateTextBox) {
@@ -77,7 +80,7 @@
 
      //the polyline FeatureLayer
      var routeLayer = new FeatureLayer(routesFeatureUrl, {
-       mode: FeatureLayer.MODE_ONDEMAND,
+       mode: FeatureLayer.MODE_SNAPSHOT,
        outFields: ["END_TIME", "Day_", "DeviceID"]
      });
 
@@ -87,7 +90,29 @@
 
      routeLayer.setRenderer(new SimpleRenderer(lineSymb));
      map.addLayer(routeLayer);
-
+     
+     var llWidget = new LayerList({  
+        map: map,  
+        showLegend: true,   
+        layers: [{  
+            layer: heatmapFeatureLayer,
+            showLegend: true,
+            id: "HeatMap Layer"
+          },{  
+            layer: routeLayer,  
+              showLegend: true,
+              id: "RoutePath Layer"
+          }]  
+        },"layerList");  
+    
+        llWidget.startup();  
+     
+    llWidget.on("load", function() {
+         document.getElementsByClassName("esriLabel")[1].innerHTML = "HeatMap Layer"
+         document.getElementsByClassName("esriLabel")[0].innerHTML = "RoutePath Layer"
+     });
+     
+     
      map.on("click", clickHandler);
 
      function clickHandler(evt) {
@@ -157,26 +182,12 @@
          chart.resize(630,160);
 
           // Define the data
-          // var chartData = [10000,9200,11811,12000,7662,13887,14200];
           var chartData = dailyAverage;
 
           new Highlight(chart, "default");
           new Tooltip(chart, "default");
           new MoveSlice(chart, "default");
 
-          // // Add axes
-          // chart.addAxis("x",{
-          //         labels: [
-          //            {value: 0, text: ""},
-			    //      {value: 1, text: "Mon"},
-			    //      {value: 2, text: "Tue"},
-			    //      {value: 3, text: "Wed"},
-			    //      {value: 4, text: "Thu"},
-			    //      {value: 5, text: "Fri"},
-          //            {value: 6, text: "Sat"},
-          //            {value: 7, text: "Sun"}
-          //         ]
-          // });
           chart.addAxis("x", {fixLower: "major", fixUpper: "major"})
           chart.addAxis("y", { vertical: true, fixLower: "major", fixUpper: "major" });
 
