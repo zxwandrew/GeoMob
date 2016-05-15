@@ -30,7 +30,7 @@
      "dojo/dom-class",
      "dojo/on",
      "dijit/form/DateTextBox",
-     "dijit/layout/BorderContainer", 
+     "dijit/layout/BorderContainer",
      "dijit/layout/ContentPane",
      "dojo/domReady!"
    ],
@@ -90,34 +90,34 @@
 
      routeLayer.setRenderer(new SimpleRenderer(lineSymb));
      map.addLayer(routeLayer);
-     
-     var llWidget = new LayerList({  
-        map: map,  
-        showLegend: true,   
-        layers: [{  
+
+     var llWidget = new LayerList({
+        map: map,
+        showLegend: true,
+        layers: [{
             layer: heatmapFeatureLayer,
             showLegend: true,
             id: "HeatMap Layer"
-          },{  
-            layer: routeLayer,  
+          },{
+            layer: routeLayer,
               showLegend: true,
               id: "RoutePath Layer"
-          }]  
-        },"layerList");  
-    
-        llWidget.startup();  
-     
+          }]
+        },"layerList");
+
+        llWidget.startup();
+
     llWidget.on("load", function() {
          document.getElementsByClassName("esriLabel")[1].innerHTML = "HeatMap Layer"
          document.getElementsByClassName("esriLabel")[0].innerHTML = "RoutePath Layer"
      });
-     
-     
+
+
      map.on("click", clickHandler);
 
      function clickHandler(evt) {
        console.log("Hi");
-
+      $("#spinner").css("display","block");
        circle = new Circle({
          center: evt.mapPoint,
          geodesic: true,
@@ -139,6 +139,7 @@
        query.geometry = circle;
        query.orderByFields = ["END_TIME DESC"];
        routeLayer.queryFeatures(query, function(featureset) {
+
          var allFeats = featureset.features;
 
          allTimes = [];
@@ -159,6 +160,7 @@
      function showChart(){
          if($("#histogrampanel").css("display") =="none"){
             $("#histogrampanel").css("display","block");
+
         }
         else{
              $("#chart").empty();
@@ -202,6 +204,7 @@
 
           // Render the chart!
           chart.render();
+          $("#spinner").css("display","none");
 
      }
 
