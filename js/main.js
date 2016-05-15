@@ -44,7 +44,7 @@
      map = new Map("map", {
        basemap: "streets-night-vector", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
        center: [-73.7761702, 41.0308234], // longitude, latitude THE REAL ONES ARE: -73.8291346, 40.88389 //not real: -122.086, 40.01803741
-       zoom: 10
+       zoom: 12
      });
 
      var circleSymb = new SimpleFillSymbol(
@@ -79,6 +79,10 @@
      //the point featurelayer
      var heatmapFeatureLayer = new FeatureLayer(baseHeatUrl, heatmapFeatureLayerOptions);
 
+     //the points layer
+     var pointsLayer = new FeatureLayer(baseHeatUrl, {mode: FeatureLayer.MODE_SNAPSHOT});
+
+
      //the polyline FeatureLayer
      var routeLayer = new FeatureLayer(routesFeatureUrl, {
        mode: FeatureLayer.MODE_SNAPSHOT,
@@ -91,6 +95,7 @@
 
      routeLayer.setRenderer(new SimpleRenderer(lineSymb));
      map.addLayer(routeLayer);
+     map.addLayer(pointsLayer);
 
      var llWidget = new LayerList({
         map: map,
@@ -103,6 +108,10 @@
             layer: routeLayer,
               showLegend: true,
               id: "RoutePath Layer"
+          },{
+            layer: pointsLayer,
+              showLegend: true,
+              id: "Points Layer"
           }]
         },"layerList");
 
@@ -111,6 +120,7 @@
     llWidget.on("load", function() {
          document.getElementsByClassName("esriLabel")[1].innerHTML = "HeatMap Layer"
          document.getElementsByClassName("esriLabel")[0].innerHTML = "RoutePath Layer"
+         document.getElementsByClassName("esriLabel")[2].innerHTML = "RoutePath Layer"
      });
 
 
@@ -202,7 +212,32 @@
           new Tooltip(chart, "default");
           new MoveSlice(chart, "default");
 
-          chart.addAxis("x", {fixLower: "major", fixUpper: "major"})
+          chart.addAxis("x", {labels: [
+                    {value: 1, text: "1"},
+                   {value: 2, text: "2"},
+                    {value: 3, text: "3"},
+                   {value: 4, text: "4"},
+                    {value: 5, text: "5"},
+                   {value: 6, text: "6"},
+                   {value: 7, text: "7"},
+                    {value: 8, text: "8"},
+                   {value: 9, text: "9"},
+                    {value: 10, text: "10"},
+                   {value: 11, text: "11"},
+                    {value: 12, text: "12"},
+                   {value: 13, text: "13"},
+                   {value: 14, text: "14"},
+                    {value: 15, text: "15"},
+                   {value: 16, text: "16"},
+                    {value: 17, text: "17"},
+                   {value: 18, text: "18"},
+                    {value: 19, text: "19"},
+                   {value: 20, text: "20"},
+                   {value: 21, text: "21"},
+                   {value: 22, text: "22"},
+                   {value: 23, text: "23"},
+                   {value: 24, text: "24"},
+               ]})
           chart.addAxis("y", { vertical: true, fixLower: "major", fixUpper: "major" });
 
           // Add the series of data
