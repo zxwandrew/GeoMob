@@ -118,7 +118,7 @@
 
      function clickHandler(evt) {
        console.log("Hi");
-
+      $("#spinner").css("display","block");
        circle = new Circle({
          center: evt.mapPoint,
          geodesic: true,
@@ -140,6 +140,7 @@
        query.geometry = circle;
        query.orderByFields = ["END_TIME DESC"];
        routeLayer.queryFeatures(query, function(featureset) {
+
          var allFeats = featureset.features;
 
          allTimes = [];
@@ -165,6 +166,7 @@
      function showChart(){
          if($("#histogrampanel").css("display") =="none"){
             $("#histogrampanel").css("display","block");
+
         }
         else{
              $("#chart").empty();
@@ -208,6 +210,7 @@
 
           // Render the chart!
           chart.render();
+          $("#spinner").css("display","none");
 
      }
 

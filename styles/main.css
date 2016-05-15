@@ -65,3 +65,47 @@
       .dropdown-menu{
         left:-50px;
       }
+#spinner{
+      position: absolute;
+    z-index: 9999;
+    /* top: 100px; */
+    left: 40%;
+    top: 30%;
+    /* background-color: #151414; */
+    width: 50px;
+    height: 50px;
+    margin-left: 50px;
+    color: white;
+}
+h4 {
+    font-size:18px;
+    font-weight:bold;
+}
+.fa-spin-custom, .glyphicon-spin {
+    -webkit-animation: spin 2000ms infinite linear;
+    animation: spin 2000ms infinite linear;
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+.glyphicon{
+  font-weight: 1400!important;
+
+}
