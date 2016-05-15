@@ -43,16 +43,18 @@
       </div>
     </div>
     <div id="histogrampanel" class="panel panel-default">
-        <div class="panel-heading">Histogram</div>
-        <div class="panel-body">
-          <p>...</p>
+        <div class="panel-heading">Histogram
+            <button type="button" id="closePanelBtn" class="close">
+               <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+           </button>
+        </div>
+        <div class="panel-body" id="chartContainer">
+            <div id="chart"></div>
         </div>
     </div>
+      
     <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
-
     </div>
-
-
   </div>
 </body>
 </html>
