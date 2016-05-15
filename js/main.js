@@ -2,8 +2,11 @@
    $('.dropdown-toggle').dropdown()
  });
  var map;
- var baseHeatUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/MobileSignalnfo/FeatureServer/0";
- var routesFeatureUrl = "http://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/1";
+ var baseHeatUrl = "http://kurama:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0";
+ var routesFeatureUrl = "http://kurama:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/1";
+ var allTimes = [];
+ var dailyAverage = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+ var dailyAverageComputed = false;
 
  require(["esri/map",
      "esri/layers/FeatureLayer",
@@ -14,6 +17,7 @@
      "esri/symbols/SimpleLineSymbol",
      "esri/symbols/SimpleFillSymbol",
      "esri/renderers/HeatmapRenderer",
+     "esri/renderers/SimpleRenderer",
      "esri/geometry/Circle",
      "esri/graphic",
      "esri/dijit/Search",
@@ -25,13 +29,13 @@
    ],
 
    function(Map, FeatureLayer, QueryTask, Query, InfoTemplate,
-     SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, HeatmapRenderer,
+     SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, HeatmapRenderer, SimpleRenderer,
      Circle, Graphic,
      Search, Color, dom, on, DateTextBox) {
 
      map = new Map("map", {
-       basemap: "streets", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
-       center: [-122.086, 40.01803741], // longitude, latitude THE REAL ONES ARE: -73.8291346, 40.88389
+       basemap: "streets-night-vector", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+       center: [-73.8291346, 40.88389], // longitude, latitude THE REAL ONES ARE: -73.8291346, 40.88389 //not real: -122.086, 40.01803741
        zoom: 15
      });
 
@@ -43,6 +47,12 @@
          2
        ), new Color([255, 255, 0, 0.25])
      );
+
+     var lineSymb = new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([247, 34, 101, 0.9]),
+            1
+          );
 
      var search = new Search({
        map: map
@@ -63,14 +73,15 @@
 
      //the polyline FeatureLayer
      var routeLayer = new FeatureLayer(routesFeatureUrl, {
-       mode: FeatureLayer.MODE_SNAPSHOT,
-       outFields: ["last_edited_date"]
+       mode: FeatureLayer.MODE_ONDEMAND,
+       outFields: ["END_TIME", "Day_", "DeviceID"]
      });
 
      var heatmapRenderer = new HeatmapRenderer();
      heatmapFeatureLayer.setRenderer(heatmapRenderer);
      map.addLayer(heatmapFeatureLayer);
 
+     routeLayer.setRenderer(new SimpleRenderer(lineSymb));
      map.addLayer(routeLayer);
 
      map.on("click", clickHandler);
@@ -81,7 +92,7 @@
        circle = new Circle({
          center: evt.mapPoint,
          geodesic: true,
-         radius: 0.1,
+         radius: 0.01,
          radiusUnit: "esriMiles"
        });
 
@@ -91,25 +102,44 @@
 
        var query = new Query();
        query.geometry = circle;
-       query.orderByFields = ["last_edited_date DESC"];
+       query.orderByFields = ["END_TIME DESC"];
        routeLayer.queryFeatures(query, function(featureset) {
          var allFeats = featureset.features;
 
-         var allTimes = [];
-         var dailyAverage = [];
+         allTimes = [];
 
          for (var i = 0; i < allFeats.length; i++) {
-
+           var nowDate = new Date(allFeats[i].attributes.END_TIME*1000);
+           allTimes.push(nowDate);
          }
+         initHistograms();
        });
+     }
 
-       //  var query = new Query();
-       //  query.where = "device_id = 493265";
-       //  query.orderByFields = ["timestamp_ DESC"];
-       //  heatmapFeatureLayer.queryFeatures(query, function(featureset){
-       //
-       //  });
-
+     function initHistograms(){
 
      }
+
+     function calcDailyAverage(){
+       if(!dailyAverageComputed){
+         var dailySum = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+         var uniqueDays = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+         dailyAverageComputed = true;
+
+         for(var i=0; i<allTimes.length; i++){
+           hour = allTimes[i].getHours();
+           dailySum[hour].push(allTimes[i]);
+         }
+         for(var i=0; i<24; i++){
+           for(var j=1; j<dailySum[i].length; j++){ //loop through to get all unique days
+             if(dailySum[i][j].getDate() != dailySum[i][j-1].getDate()){
+               uniqueDays[i]++;
+             }
+           }
+           dailyAverage[i] = dailySum[i].length/uniqueDays[i];
+         }
+       }//finished computing daily average for all days at hourly interval
+     }
+
    });
