@@ -11,6 +11,7 @@
        "esri/InfoTemplate",
        "esri/symbols/SimpleMarkerSymbol",
        "esri/renderers/HeatmapRenderer",
+       "esri/dijit/Search",
        "dojo/_base/Color",
        "dojo/dom",
        "dojo/on",
@@ -18,12 +19,17 @@
        "dojo/domReady!"
      ],
 
-     function(Map, FeatureLayer, QueryTask, Query, InfoTemplate, SimpleMarkerSymbol, HeatmapRenderer, Color, dom, on, DateTextBox) {
+     function(Map, FeatureLayer, QueryTask, Query, InfoTemplate, SimpleMarkerSymbol, HeatmapRenderer, Search,Color, dom, on, DateTextBox) {
        map = new Map("map", {
          basemap: "dark-gray", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
          center: [-73.900245, 40.93486], // longitude, latitude
          zoom: 20
        });
+
+       var search = new Search({
+            map: map
+         }, "search");
+       search.startup();
 
        var infoTemplate = new InfoTemplate("Attributes",
          "device_id: ${device_id}<br>Time: ${timestamp_}");
