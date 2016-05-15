@@ -19,8 +19,12 @@
      "esri/geometry/Circle",
      "esri/graphic",
      "esri/dijit/Search",
+     "dojox/charting/Chart2D",
+     "dojox/charting/themes/MiamiNice",
+     "dojox/charting/action2d/Highlight", "dojox/charting/action2d/MoveSlice", "dojox/charting/action2d/Tooltip",
      "dojo/_base/Color",
      "dojo/dom",
+     "dojo/dom-class",
      "dojo/on",
      "dijit/form/DateTextBox",
      "dojo/domReady!"
@@ -29,7 +33,7 @@
    function(Map, FeatureLayer, QueryTask, Query, InfoTemplate,
      SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, HeatmapRenderer,
      Circle, Graphic,
-     Search, Color, dom, on, DateTextBox) {
+     Search, Chart2D, dojoxTheme, Highlight, MoveSlice, Tooltip, Color, dom, domClass, on, DateTextBox) {
 
      map = new Map("map", {
        basemap: "streets-night-vector", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
@@ -108,6 +112,67 @@
      }
 
      function initHistogram(){
-        $("#histogrampanel").css("display","block");
+        showChart();
+          
+     }
+     function showChart(){
+         if($("#histogrampanel").css("display") =="none"){
+            $("#histogrampanel").css("display","block");
+        }
+        else{
+             $("#chart").empty();
+        }
+        
+        
+        $("#closePanelBtn").click(function(){
+            $("#chart").empty();
+            if($("#histogrampanel").css("display") =="block"){
+                $("#histogrampanel").css("display","none");
+            }
+        })
+            
+        
+        var chart = new Chart2D($("#chart")[0]);
+          domClass.add(chart, "chart");
+
+          // Apply a color theme to the chart.
+          chart.setTheme(dojoxTheme);
+          // Add the only/default plot
+          chart.addPlot("default", {
+              type: "Columns",
+              markers: true,
+              gap: 5
+          });
+         
+         chart.resize(630,160);
+         
+          // Define the data
+          var chartData = [10000,9200,11811,12000,7662,13887,14200];
+         
+          new Highlight(chart, "default");
+          new Tooltip(chart, "default");
+          new MoveSlice(chart, "default");
+          
+          // Add axes
+          chart.addAxis("x",{
+                  labels: [
+                     {value: 0, text: ""},
+			         {value: 1, text: "Mon"}, 
+			         {value: 2, text: "Tue"},
+			         {value: 3, text: "Wed"}, 
+			         {value: 4, text: "Thu"},
+			         {value: 5, text: "Fri"},
+                     {value: 6, text: "Sat"},
+                     {value: 7, text: "Sun"} 
+                  ]   
+          });
+          chart.addAxis("y", { vertical: true, fixLower: "major", fixUpper: "major" });
+          
+          // Add the series of data
+          chart.addSeries("Monthly Sales",chartData);
+          
+          // Render the chart!
+          chart.render();    
+         
      }
    });
