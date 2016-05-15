@@ -39,7 +39,7 @@
 
      map = new Map("map", {
        basemap: "streets-night-vector", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
-       center: [-73.8291346, 40.88389], // longitude, latitude THE REAL ONES ARE: -73.8291346, 40.88389 //not real: -122.086, 40.01803741
+       center: [-73.7761702, 41.0308234], // longitude, latitude THE REAL ONES ARE: -73.8291346, 40.88389 //not real: -122.086, 40.01803741
        zoom: 15
      });
 
@@ -122,7 +122,8 @@
 
 
      function initHistograms(){
-        showChart();          
+       calcDailyAverage();
+       showChart();
      }
      function showChart(){
          if($("#histogrampanel").css("display") =="none"){
@@ -131,16 +132,16 @@
         else{
              $("#chart").empty();
         }
-        
-        
+
+
         $("#closePanelBtn").click(function(){
             $("#chart").empty();
             if($("#histogrampanel").css("display") =="block"){
                 $("#histogrampanel").css("display","none");
             }
         })
-            
-        
+
+
         var chart = new Chart2D($("#chart")[0]);
           domClass.add(chart, "chart");
 
@@ -152,48 +153,52 @@
               markers: true,
               gap: 5
           });
-         
+
          chart.resize(630,160);
-         
+
           // Define the data
-          var chartData = [10000,9200,11811,12000,7662,13887,14200];
-         
+          // var chartData = [10000,9200,11811,12000,7662,13887,14200];
+          var chartData = dailyAverage;
+
           new Highlight(chart, "default");
           new Tooltip(chart, "default");
           new MoveSlice(chart, "default");
-          
-          // Add axes
-          chart.addAxis("x",{
-                  labels: [
-                     {value: 0, text: ""},
-			         {value: 1, text: "Mon"}, 
-			         {value: 2, text: "Tue"},
-			         {value: 3, text: "Wed"}, 
-			         {value: 4, text: "Thu"},
-			         {value: 5, text: "Fri"},
-                     {value: 6, text: "Sat"},
-                     {value: 7, text: "Sun"} 
-                  ]   
-          });
+
+          // // Add axes
+          // chart.addAxis("x",{
+          //         labels: [
+          //            {value: 0, text: ""},
+			    //      {value: 1, text: "Mon"},
+			    //      {value: 2, text: "Tue"},
+			    //      {value: 3, text: "Wed"},
+			    //      {value: 4, text: "Thu"},
+			    //      {value: 5, text: "Fri"},
+          //            {value: 6, text: "Sat"},
+          //            {value: 7, text: "Sun"}
+          //         ]
+          // });
+          chart.addAxis("x", {fixLower: "major", fixUpper: "major"})
           chart.addAxis("y", { vertical: true, fixLower: "major", fixUpper: "major" });
-          
+
           // Add the series of data
           chart.addSeries("Monthly Sales",chartData);
-          
+
           // Render the chart!
-          chart.render();    
-         
+          chart.render();
+
      }
 
      function calcDailyAverage(){
-       if(!dailyAverageComputed){
+      //  if(!dailyAverageComputed){
          var dailySum = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
          var uniqueDays = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
          dailyAverageComputed = true;
+         console.log(allTimes.length);
 
          for(var i=0; i<allTimes.length; i++){
            hour = allTimes[i].getHours();
+           uniqueDays[hour] = 1;
            dailySum[hour].push(allTimes[i]);
          }
          for(var i=0; i<24; i++){
@@ -202,9 +207,13 @@
                uniqueDays[i]++;
              }
            }
-           dailyAverage[i] = dailySum[i].length/uniqueDays[i];
+           if(uniqueDays[i]!=0){
+             dailyAverage[i] = dailySum[i].length/uniqueDays[i];
+           }else{
+             dailyAverage[i] = 0;
+           }
          }
-       }//finished computing daily average for all days at hourly interval
+      //  }//finished computing daily average for all days at hourly interval
      }
 
    });
