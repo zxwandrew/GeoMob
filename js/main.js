@@ -154,7 +154,7 @@
               gap: 5
           });
 
-         chart.resize(630,160);
+         chart.resize($("#chartContainer").width()-50,$("#chartContainer").height()-150);
 
           // Define the data
           // var chartData = [10000,9200,11811,12000,7662,13887,14200];
