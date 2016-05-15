@@ -4,6 +4,8 @@
  var map;
  var baseHeatUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/MobileSignalnfo/FeatureServer/0";
  var routesFeatureUrl = "http://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/1";
+ var allTimes = [];
+ var dailyAverage = [];
 
  require(["esri/map",
      "esri/layers/FeatureLayer",
@@ -30,7 +32,7 @@
      Search, Color, dom, on, DateTextBox) {
 
      map = new Map("map", {
-       basemap: "streets", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+       basemap: "streets-night-vector", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
        center: [-122.086, 40.01803741], // longitude, latitude THE REAL ONES ARE: -73.8291346, 40.88389
        zoom: 15
      });
@@ -95,21 +97,17 @@
        routeLayer.queryFeatures(query, function(featureset) {
          var allFeats = featureset.features;
 
-         var allTimes = [];
-         var dailyAverage = [];
+         allTimes = [];
 
          for (var i = 0; i < allFeats.length; i++) {
-
+           var nowDate = new Date(allFeats[i].attributes.last_edited_date*1000);
+           allTimes.push(nowDate);
          }
+         initHistogram();
        });
+     }
 
-       //  var query = new Query();
-       //  query.where = "device_id = 493265";
-       //  query.orderByFields = ["timestamp_ DESC"];
-       //  heatmapFeatureLayer.queryFeatures(query, function(featureset){
-       //
-       //  });
-
+     function initHistogram(){
 
      }
    });
