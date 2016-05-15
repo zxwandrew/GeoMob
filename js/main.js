@@ -20,9 +20,9 @@
 
      function(Map, FeatureLayer, QueryTask, Query, InfoTemplate, SimpleMarkerSymbol, HeatmapRenderer, Color, dom, on, DateTextBox) {
        map = new Map("map", {
-         basemap: "dark-gray", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
-         center: [-73.900245, 40.93486], // longitude, latitude
-         zoom: 20
+         basemap: "streets", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+         center: [-73.8291346, 40.88389], // longitude, latitude
+         zoom: 18
        });
 
        var infoTemplate = new InfoTemplate("Attributes",
@@ -38,4 +38,19 @@
        var heatmapRenderer = new HeatmapRenderer();
        heatmapFeatureLayer.setRenderer(heatmapRenderer);
        map.addLayer(heatmapFeatureLayer);
+
+       map.on("click", clickHandler);
+
+       function clickHandler(){
+         console.log("Hi");
+
+         var query = new Query();
+         query.where = "device_id = 493265";
+         query.orderByFields = ["timestamp_ DESC"];
+         heatmapFeatureLayer.queryFeatures(query, function(featureset){
+           
+         });
+
+
+       }
 });
