@@ -292,4 +292,10 @@
          });
        }
      }
+
+     function swtichCharts(){
+       
+     }
+
+
    });
