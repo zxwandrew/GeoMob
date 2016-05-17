@@ -27,6 +27,7 @@
      "esri/graphic",
      "esri/dijit/Search",
      "dojox/charting/Chart2D",
+     "dojox/charting/plot2d/Pie",
      "dojox/charting/themes/MiamiNice",
      "dojox/charting/action2d/Highlight", "dojox/charting/action2d/MoveSlice", "dojox/charting/action2d/Tooltip",
      "dojo/_base/Color",
@@ -42,7 +43,7 @@
    function(Map, LayerList, FeatureLayer, QueryTask, Query, InfoTemplate,
      SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, HeatmapRenderer, SimpleRenderer,
      Circle, Graphic,
-     Search, Chart2D, dojoxTheme, Highlight, MoveSlice, Tooltip, Color, dom, domClass, on, DateTextBox) {
+     Search, Chart2D,Pie, dojoxTheme, Highlight, MoveSlice, Tooltip, Color, dom, domClass, on, DateTextBox) {
 
      map = new Map("map", {
        basemap: "streets-night-vector", //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
@@ -131,6 +132,7 @@
 
      function clickHandler(evt) {
        console.log("Hi");
+
       $("#spinner").css("display","block");
        circle = new Circle({
          center: evt.mapPoint,
@@ -139,7 +141,17 @@
          radiusUnit: "esriMiles"
        });
 
-
+       //need to be move down inside the showChart() function when service is ready.
+        $("#chart-toggle").change(function() {
+          if($(this).prop('checked')){
+            console.log("traffic histogram");
+            showChart();
+          }
+          else{
+            console.log("social chart");
+            showSocialChart();
+          }
+       });
 
        map.graphics.clear();
        var circleGraphic = new Graphic(circle, circleSymb);
@@ -175,13 +187,52 @@
        calcDailyAverage();
        calcPopApp();
        showChart();
+       showSocialChart();
+     }
+     function showSocialChart(){
+        $("#social-chart").empty();
+        $("#chart").css("display","none");
+        $("#social-chart").css("display","block");
+
+        var chartData = [10000,9200,11811,12000,7662];
+      
+      // Create the chart within it's "holding" node
+      var chart = new Chart2D("social-chart");
+
+      // Set the theme
+      chart.setTheme(dojoxTheme);
+
+      // Add the only/default plot 
+      chart.addPlot("default", {
+        type: Pie,
+        markers: true,
+        radius:80
+      });
+      
+      // Add axes
+      chart.addAxis("x");
+      chart.addAxis("y", { min: 5000, max: 30000, vertical: true, fixLower: "major", fixUpper: "major" });
+
+      // Add the series of data
+      chart.addSeries("Monthly Sales - 2010",chartData);
+      
+      // Create the tooltip
+      var tip = new Tooltip(chart,"default");
+      
+      // Create the slice mover
+      var mag = new MoveSlice(chart,"default");
+      
+      // Render the chart!
+      chart.render();
      }
      function showChart(){
-         if($("#histogrampanel").css("display") =="none"){
-            $("#histogrampanel").css("display","block");
+         if($("#panel").css("display") =="none"){
+            $("#panel").css("display","block");
         }
         else{
              $("#chart").empty();
+             $("#chart").css("display","block");
+             $("#social-chart").css("display","none");
         }
 
 
