@@ -11,7 +11,7 @@
       }
       #layerListPane{
           width:20%;
-          right: 0;
+          right: 20px;
           position: absolute;
           z-index: 99;
       }
@@ -29,7 +29,7 @@
           background-color: #fff;
       }
       #histogrampanel{
-        display:none;
+        display: block;
         bottom: 0;
         position: absolute;
         z-index: 300;
@@ -64,6 +64,12 @@
       }
       .dropdown-menu{
         left:-50px;
+      }
+      #chart{
+
+      }
+      #social-chart{
+        display: none;
       }
 #spinner{
       position: absolute;
