@@ -1,9 +1,12 @@
  $(document).ready(function() {
    $('.dropdown-toggle').dropdown()
  });
+ //http://10.150.92.6:6080/arcgis/rest/services/UCI/HackData/FeatureServer/0
+ //http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0
+
  var map;
- var baseHeatUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0";
- var routesFeatureUrl = "http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/1";
+ var baseHeatUrl = "http://10.150.92.6:6080/arcgis/rest/services/UCI/HackData/FeatureServer/0";
+ var routesFeatureUrl = "http://10.150.92.6:6080/arcgis/rest/services/UCI2/HackData/FeatureServer/0";
  var allTimes = [];
  var allDeviceIDs = [];
  var dailyAverage = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -118,9 +121,9 @@
         llWidget.startup();
 
     llWidget.on("load", function() {
-         document.getElementsByClassName("esriLabel")[1].innerHTML = "HeatMap Layer"
-         document.getElementsByClassName("esriLabel")[0].innerHTML = "RoutePath Layer"
-         document.getElementsByClassName("esriLabel")[2].innerHTML = "RoutePath Layer"
+      document.getElementsByClassName("esriLabel")[0].innerHTML = "Points Layer";
+      document.getElementsByClassName("esriLabel")[1].innerHTML = "Routes Layer";
+      document.getElementsByClassName("esriLabel")[2].innerHTML = "HeatMap Layer";
      });
 
 
@@ -143,7 +146,7 @@
        map.graphics.add(circleGraphic);
 
 
-       map.setLevel(17)
+       map.setLevel(17);
        map.centerAt(evt.mapPoint);
 
        var query = new Query();
@@ -176,7 +179,6 @@
      function showChart(){
          if($("#histogrampanel").css("display") =="none"){
             $("#histogrampanel").css("display","block");
-
         }
         else{
              $("#chart").empty();
@@ -188,7 +190,7 @@
             if($("#histogrampanel").css("display") =="block"){
                 $("#histogrampanel").css("display","none");
             }
-        })
+        });
 
 
         var chart = new Chart2D($("#chart")[0]);
@@ -237,7 +239,7 @@
                    {value: 22, text: "22"},
                    {value: 23, text: "23"},
                    {value: 24, text: "24"},
-               ]})
+               ]});
           chart.addAxis("y", { vertical: true, fixLower: "major", fixUpper: "major" });
 
           // Add the series of data
@@ -268,7 +270,7 @@
                uniqueDays[i]++;
              }
            }
-           if(uniqueDays[i]!=0){
+           if(uniqueDays[i]!==0){
              dailyAverage[i] = dailySum[i].length/uniqueDays[i];
            }else{
              dailyAverage[i] = 0;
@@ -287,7 +289,7 @@
          qtask.execute(q, function(res){
            console.log(res);
            appDivision.push(res.features[0].attributes.app);
-         })
+         });
        }
      }
    });
