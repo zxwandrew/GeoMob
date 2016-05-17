@@ -66,10 +66,11 @@
         left:-50px;
       }
       #chart{
-
+        text-align:center;
       }
       #social-chart{
         display: none;
+        text-align:center;
       }
 #spinner{
       position: absolute;
@@ -114,4 +115,7 @@ h4 {
 .glyphicon{
   font-weight: 1400!important;
 
+}
+#chart-toggle-container{
+  text-align:center;
 }
