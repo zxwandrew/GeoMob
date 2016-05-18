@@ -29,7 +29,7 @@
           background-color: #fff;
       }
       #panel{
-        display: block;
+        display: none;
         bottom: 0;
         position: absolute;
         z-index: 300;

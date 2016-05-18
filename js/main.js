@@ -5,8 +5,9 @@
  //http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0
 
  var map;
- var baseHeatUrl = "http://10.150.92.6:6080/arcgis/rest/services/UCI/HackData/FeatureServer/0";
- var routesFeatureUrl = "http://10.150.92.6:6080/arcgis/rest/services/UCI2/HackData/FeatureServer/0";
+ var baseHeatUrl = "http://awang:6080/arcgis/rest/services/September/FeatureServer/0";
+ var routesDisplayUrl = "http://awang:6080/arcgis/rest/services/allroutes/route2/FeatureServer/0"
+ var routesFeatureUrl = "http://awang:6080/arcgis/rest/services/allroutes/workingroute/FeatureServer/1";
  var allTimes = [];
  var allDeviceIDs = [];
  var dailyAverage = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -86,6 +87,9 @@
      //the points layer
      var pointsLayer = new FeatureLayer(baseHeatUrl, {mode: FeatureLayer.MODE_SNAPSHOT});
 
+     var routeDisplayLayer = new FeatureLayer(routesDisplayUrl, {mode: FeatureLayer.MODE_SNAPSHOT});
+     routeDisplayLayer.setRenderer(new SimpleRenderer(lineSymb));
+
 
      //the polyline FeatureLayer
      var routeLayer = new FeatureLayer(routesFeatureUrl, {
@@ -98,8 +102,13 @@
      map.addLayer(heatmapFeatureLayer);
 
      routeLayer.setRenderer(new SimpleRenderer(lineSymb));
-     map.addLayer(routeLayer);
+
+     //this is the display layer
+     map.addLayer(routeDisplayLayer);
      map.addLayer(pointsLayer);
+
+     //this is the processing layer
+     map.addLayer(routeLayer);
 
      var llWidget = new LayerList({
         map: map,
@@ -109,7 +118,7 @@
             showLegend: true,
             id: "HeatMap Layer"
           },{
-            layer: routeLayer,
+            layer: routeDisplayLayer,
               showLegend: true,
               id: "RoutePath Layer"
           },{
@@ -187,43 +196,43 @@
        calcDailyAverage();
        calcPopApp();
        showChart();
-       showSocialChart();
+       //showSocialChart();
      }
      function showSocialChart(){
-        $("#social-chart").empty();
+        // $("#social-chart").empty();
         $("#chart").css("display","none");
         $("#social-chart").css("display","block");
 
-        var chartData = [10000,9200,11811,12000,7662];
-      
-      // Create the chart within it's "holding" node
-      var chart = new Chart2D("social-chart");
-
-      // Set the theme
-      chart.setTheme(dojoxTheme);
-
-      // Add the only/default plot 
-      chart.addPlot("default", {
-        type: Pie,
-        markers: true,
-        radius:80
-      });
-      
-      // Add axes
-      chart.addAxis("x");
-      chart.addAxis("y", { min: 5000, max: 30000, vertical: true, fixLower: "major", fixUpper: "major" });
-
-      // Add the series of data
-      chart.addSeries("Monthly Sales - 2010",chartData);
-      
-      // Create the tooltip
-      var tip = new Tooltip(chart,"default");
-      
-      // Create the slice mover
-      var mag = new MoveSlice(chart,"default");
-      
-      // Render the chart!
-      chart.render();
+      //   var chartData = [10000,9200,11811,12000,7662];
+      //
+      // // Create the chart within it's "holding" node
+      // var chart = new Chart2D("social-chart");
+      //
+      // // Set the theme
+      // chart.setTheme(dojoxTheme);
+      //
+      // // Add the only/default plot
+      // chart.addPlot("default", {
+      //   type: Pie,
+      //   markers: true,
+      //   radius:80
+      // });
+      //
+      // // Add axes
+      // chart.addAxis("x");
+      // chart.addAxis("y", { min: 5000, max: 30000, vertical: true, fixLower: "major", fixUpper: "major" });
+      //
+      // // Add the series of data
+      // chart.addSeries("Monthly Sales - 2010",chartData);
+      //
+      // // Create the tooltip
+      // var tip = new Tooltip(chart,"default");
+      //
+      // // Create the slice mover
+      // var mag = new MoveSlice(chart,"default");
+      //
+      // // Render the chart!
+      // chart.render();
      }
      function showChart(){
          if($("#panel").css("display") =="none"){
@@ -345,7 +354,7 @@
      }
 
      function swtichCharts(){
-       
+
      }
 
 
