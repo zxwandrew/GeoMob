@@ -5,11 +5,12 @@
  //http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/0
 
  var map;
- var baseHeatUrl = "http://awang:6080/arcgis/rest/services/September/FeatureServer/0";
- var routesDisplayUrl = "http://awang:6080/arcgis/rest/services/allroutes/route2/FeatureServer/0"
- var routesFeatureUrl = "http://awang:6080/arcgis/rest/services/allroutes/workingroute/FeatureServer/1";
+ var baseHeatUrl = "http://services3.arcgis.com/1r5GjedYvrUnb1dZ/arcgis/rest/services/September10K/FeatureServer/0";
+ var routesDisplayUrl = "http://services3.arcgis.com/1r5GjedYvrUnb1dZ/arcgis/rest/services/RoutesAndTable/FeatureServer/0"
+ var routesFeatureUrl = "http://services3.arcgis.com/1r5GjedYvrUnb1dZ/arcgis/rest/services/RoutesAndTable/FeatureServer/1";
  var allTimes = [];
  var allDeviceIDs = [];
+ var appDivision = [];
  var dailyAverage = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
  var dailyAverageComputed = false;
 
@@ -66,6 +67,11 @@
             new Color([247, 34, 101, 0.9]),
             1
           );
+      var dataLineSymb = new SimpleLineSymbol(
+             SimpleLineSymbol.STYLE_SOLID,
+             new Color([247, 34, 101, 0.9]),
+             1
+           );
 
      var search = new Search({
        map: map
@@ -101,7 +107,7 @@
      heatmapFeatureLayer.setRenderer(heatmapRenderer);
      map.addLayer(heatmapFeatureLayer);
 
-     routeLayer.setRenderer(new SimpleRenderer(lineSymb));
+     routeLayer.setRenderer(new SimpleRenderer(dataLineSymb));
 
      //this is the display layer
      map.addLayer(routeDisplayLayer);
@@ -202,6 +208,38 @@
         // $("#social-chart").empty();
         $("#chart").css("display","none");
         $("#social-chart").css("display","block");
+
+
+        var modeMap = {};
+        var maxEl = appDivision[0], maxCount = 1;
+        for(var i = 0; i < appDivision.length; i++)
+        {
+          var el = appDivision[i];
+          if(modeMap[el] == null)
+            modeMap[el] = 1;
+          else
+            modeMap[el]++;
+          if(modeMap[el] > maxCount)
+          {
+            maxEl = el;
+            maxCount = modeMap[el];
+          }
+        }
+
+        switch(maxEl){
+          case "Snapchat":
+            console.log("snapchat")
+            document.getElementById("social-chart").innerHTML='<img src="http://thenewswisecom.ipage.com/wp-content/uploads/2016/05/Snapchat-logo-as.png" style="width:250px;height:250px;">';
+            break;
+          case "Facebook":
+            console.log("fb")
+            document.getElementById("social-chart").innerHTML='<img src="https://www.facebookbrand.com/img/fb-art.jpg" style="width:250px;height:250px;">';
+            break;
+          default:
+            console.log("idunno"+ maxEl)
+            break;
+        }
+
 
       //   var chartData = [10000,9200,11811,12000,7662];
       //
@@ -340,12 +378,13 @@
      }
 
      function calcPopApp(){
-       var appDivision = [];
+       appDivision = [];
        for(var i=0; i<allDeviceIDs.length; i++){
-         var qtask = new QueryTask("http://128.200.216.252:6080/arcgis/rest/services/Hackathon/HackData/FeatureServer/2");
+         var qtask = new QueryTask("http://services3.arcgis.com/1r5GjedYvrUnb1dZ/ArcGIS/rest/services/RoutesAndTable/FeatureServer/2");
          var q = new Query();
          q.outFields = ["deviceID", "app"];
          q.where = "deviceID = "+allDeviceIDs[i];
+         //query all devcidID for their most used social media
          qtask.execute(q, function(res){
            console.log(res);
            appDivision.push(res.features[0].attributes.app);
